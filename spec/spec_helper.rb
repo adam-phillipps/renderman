@@ -16,7 +16,27 @@
 # users commonly want.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+require 'byebug'
+require 'webmock/rspec'
+WebMock.disable_net_connect!(allow_localhost: true)
+
 RSpec.configure do |config|
+  config.before(:each) do
+    stub_request(:get, "https://sqs.us-west-2.amazonaws.com/828660616807/backlog").
+      with(
+        :body => "Action=ReceiveMessage&AttributeName.1=All&MaxNumberOfMessages=10&MessageAttributeName.1=All&QueueUrl=https%3A%2F%2Fsqs.us-west-2.amazonaws.com%2F828660616807%2Fbacklog&Version=2012-11-05&VisibilityTimeout=0&WaitTimeSeconds=20",
+        :headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'', 
+          'Authorization'=> "AWS4-HMAC-SHA256 Credential=AKIAJA5DI3BCQVIG5EYQ/20150723/us-west-2/sqs/aws4_request, 
+            SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, 
+            Signature=" + /(.*)/, 
+          'Content-Length'=>'225', 
+          'Content-Type'=>'application/x-www-form-urlencoded; charset=utf-8', 
+          'Host'=>'sqs.us-west-2.amazonaws.com',
+          'User-Agent'=>'aws-sdk-ruby2/2.1.7 ruby/2.2.2 x86_64-darwin14',
+          'X-Amz-Content-Sha256'=>'69989b6214940be89107b5aa8b2ae57eeacec18385895f46f13dc20651e3671e',
+          'X-Amz-Date'=>'20150723T055125Z'}).
+            to_return(:status => 200, :body => "", :headers => {})
+  end
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

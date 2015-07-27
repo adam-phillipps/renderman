@@ -1,36 +1,17 @@
-require 'dotenv'
-Dotenv.load
-require 'aws-sdk'
-require 'byebug'
+require 'spec_helper'
 
-class SpotMaker
-  def initialize
-  	configure_aws
-  	run_program
+require_relative '../spot_maker'
+
+describe SpotMaker do
+  it 'should be valid' do
+  	expect(subject).to be_kind_of SpotMaker
   end
 
-  def configure_aws
-  	Aws.config.update({
-      region: ENV['AWS_REGION'],
-  	  credentials: Aws::Credentials.new(
-  	  	ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY'])
-		})
+  it 'should configure Aws' do
+  	expect(subject.configure_aws[:credentials]).to be_kind_of Aws::Credentials
   end
 
-  def run_program
-  	get_backlog_messages
-  end
-
-  def get_backlog_messages
-  	backlog_queue_url = 'https://sqs.us-west-2.amazonaws.com/828660616807/backlog'
-  	poller = Aws::SQS::QueuePoller.new(backlog_queue_url)
-  	message_arr = []
-  	poller.poll(visibility_timeout: 0, skip_delete: true) do |msg|
-  	  byebug
-  	  message_arr << msg
-  	end
-  	message_arr
+  it 'should get messages from backlog sqs queue' do
+  	#expect(subject.get_backlog_messages).to 
   end
 end
-
-SpotMaker.new

@@ -22,6 +22,8 @@ WebMock.disable_net_connect!(allow_localhost: true)
 
 RSpec.configure do |config|
   config.before(:each) do
+#    stub_request(:any, "https://sqs.us-west-2.amazonaws.com/828660616807/backlog").
+#    and_return(:status => 200, :body => "", :headers => {})
     stub_request(:get, "https://sqs.us-west-2.amazonaws.com/828660616807/backlog").
       with(
         :body => "Action=ReceiveMessage&AttributeName.1=All&MaxNumberOfMessages=10&MessageAttributeName.1=All&QueueUrl=https%3A%2F%2Fsqs.us-west-2.amazonaws.com%2F828660616807%2Fbacklog&Version=2012-11-05&VisibilityTimeout=0&WaitTimeSeconds=20",

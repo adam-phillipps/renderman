@@ -14,15 +14,18 @@ class SpotMaker
   	@threshold_ratio = 1.0/2.0
   	@instance_type = 'm4.large'
   	@product_description = 'Windows'
-  	@sqs = SpotHelper.sqs_client
+  	@sqs = SpotHelper.sqs
+  	#@sqs = SpotHelper.sqs_client
   	@ec2 = SpotHelper.ec2_client
+  	byebug
   	run_program
   end
 
   def run_program
   	loop do
   		ratio = ratio_of_backlog_to_wip
-  		start_slaves(instance_count: ratio) if ratio >= @threshold_ratio
+  		ten_jobs_per_slave = (SpotHelper.number_of_jobs_in(@backlog_queue_url).to_f / 10.0).floor
+  		start_slaves(instance_count: ten_jobs_per_slave) if ratio >= @threshold_ratio
   		sleep 30
   	end
   end

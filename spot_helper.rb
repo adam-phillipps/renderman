@@ -6,6 +6,10 @@ module SpotHelper
   	  	ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY'])})
   end
 
+  def SpotHelper.sqs_poller(url)
+  	Aws::SQS::QueuePoller.new(url)
+  end
+
   def SpotHelper.ec2_client
   	Aws::EC2::Client.new({
       region: ENV['AWS_REGION'],

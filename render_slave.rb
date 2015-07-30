@@ -15,6 +15,7 @@ class RenderSlave
 			# run job(Time.now)
 			`job_that_works_in_linux` # find a way to make it work for windows
 		end
+	end
 
 		def run_job#(start_time)
 			`job_that_works_in_linux` # find a way to make it work for windows

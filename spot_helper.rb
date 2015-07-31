@@ -34,4 +34,8 @@ module SpotHelper
   		attribute_names: ['ApproximateNumberOfMessages']).
   			attributes['ApproximateNumberOfMessages'].to_f
   end
+
+  def SpotHelper.get_self_instance_id
+    `curl http://169.254.169.254/latest/meta-data/instance-id`
+  end
 end

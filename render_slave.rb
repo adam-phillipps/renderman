@@ -1,32 +1,36 @@
 require 'dotenv'
-DotEnv.load
+Dotenv.load
 require 'aws-sdk'
+require 'spot_helper'
 require 'byebug'
 
 class RenderSlave
 	def initialize
 		@poller = SpotHelper.sqs_poller
-		run_program
-	end
+		@instance_id = SpotHelper.get_self_instance_id
+		@backlog_queue_url = 'https://sqs.us-west-2.amazonaws.com/828660616807/backlog'
 
-	def run_program
-		@poller.poll(visibility_timeout: 180) do |msg|
-			# parse message json for job info
-			# run job(Time.now)
-			`job_that_works_in_linux` # find a way to make it work for windows
+		Open3.popen3('ruby time_keeper.rb') do |stdin, stdout, stderr|
+			until (stdout.gets == false) do
+				@poller.poll(visibility_timeout: 180) do |msg|
+#         parse message json for job info					
+#					Open3.popen3(rendering job) do |stdin, stdout, stderr|
+#					or
+#					`rendering job`
+			end
+			if job_still_running?
+#       do nothing?
+			else
+				SpotHelper.number_of_jobs_in(@backlog_queue_url)
+#				if no messages, let time run out
+#				else request ratio of backlog to wip
+#					if ratio is big enough, request more time
+#					else let time run out
+#			end
 		end
 	end
 
-		def run_job#(start_time)
-			`job_that_works_in_linux` # find a way to make it work for windows
-#			time_left = start_time.to_i
-#			until 5 >= time_left do
-#     	  time_left = Time.now - start_time
-#      	#running job code 
-#      	# if base case is met, 
-#      end
-#      @poller.change_message_visibility_timeout(msg, (Time.at(start_time) + 60))
-		end
+	def job_still_running?
 	end
 end
 

@@ -38,4 +38,13 @@ module SpotHelper
   def SpotHelper.get_self_instance_id
     `curl http://169.254.169.254/latest/meta-data/instance-id`
   end
+
+
+  def SpotHelper.ratio_of_backlog_to_wip
+    backlog_queue_url = 'https://sqs.us-west-2.amazonaws.com/828660616807/backlog'
+    wip_queue_url = 'https://sqs.us-west-2.amazonaws.com/828660616807/wip'
+    wip = number_of_jobs_in(wip_queue_url)
+    wip = wip == 0.0 ? 0.01 : wip # avoids devision by 0 exception
+    number_of_jobs_in(backlog_queue_url) / wip
+  end
 end

@@ -23,17 +23,11 @@ class SpotMaker
 
   def run_program
   	loop do
-  		ratio = ratio_of_backlog_to_wip
+  		ratio = SpotHelper.ratio_of_backlog_to_wip
   		ten_jobs_per_slave = (SpotHelper.number_of_jobs_in(@backlog_queue_url).to_f / 10.0).floor
   		start_slaves(instance_count: ten_jobs_per_slave) if ratio >= @threshold_ratio
   		sleep 30
   	end
-  end
-
-  def ratio_of_backlog_to_wip
-  	wip = SpotHelper.number_of_jobs_in(@wip_queue_url)
-  	wip = wip == 0.0 ? 0.01 : wip # avoids devision by 0 exception
-  	SpotHelper.number_of_jobs_in(@backlog_queue_url) / wip
   end
 
   def best_price_and_zone_for(options={})
